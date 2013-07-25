@@ -7,7 +7,6 @@ class MoviesController < ApplicationController
   end
 
   def index
-    debugger
     @all_ratings = Movie.all_ratings
     @ratings = params[:ratings] if params[:ratings]
     if !@ratings
