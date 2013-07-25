@@ -19,11 +19,11 @@ class MoviesController < ApplicationController
     @stitle = "normal"
     @sdate = "normal"
     if params[:sort]
-      @movies = Movie.order(params[:sort]).where rating: @ratings.keys
+      @movies = Movie.order(params[:sort]).find_all_by_rating(@ratings.keys)
       @stitle = 'hilite' if params[:sort] == "title"
       @sdate = 'hilite' if params[:sort] == "release_date"
     else
-      @movies = Movie.where rating: @ratings.keys
+      @movies = Movie.find_all_by_rating(@ratings.keys)
     end
   end
 
