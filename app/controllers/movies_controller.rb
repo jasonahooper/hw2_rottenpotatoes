@@ -7,37 +7,35 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.all_ratings
-    @ratings = {}
-    @all_ratings.each do |rating|
-      @ratings[rating] = "1"
-    end
-
-    if params[:commit] and !params[:ratings]
-      params[:ratings] = @ratings
-    end
-
-    if session[:ratings]
+    debugger
+    if session[:ratings] || session[:sort]
       params[:ratings] ||= session[:ratings]
-    end
-
-    if session[:sort]
       params[:sort] ||= session[:sort]
-    end
-
-    @ratings = params[:ratings] if params[:ratings]
-
-    @stitle = "normal"
-    @sdate = "normal"
-    if params[:sort]
-      session[:sort] = params[:sort]
-      @movies = Movie.order(params[:sort]).find_all_by_rating(@ratings.keys)
-      @stitle = 'hilite' if params[:sort] == "title"
-      @sdate = 'hilite' if params[:sort] == "release_date"
+      session.delete(:ratings)
+      session.delete(:sort)
+      redirect_to movies_path(params)
     else
-      @movies = Movie.find_all_by_rating(@ratings.keys)
+    
+      @all_ratings = Movie.all_ratings
+      @ratings = {}
+      @all_ratings.each do |rating|
+        @ratings[rating] = "1"
+      end
+
+      @ratings = params[:ratings] if params[:ratings]
+
+      @stitle = "normal"
+      @sdate = "normal"
+      if params[:sort]
+        session[:sort] = params[:sort]
+        @movies = Movie.order(params[:sort]).find_all_by_rating(@ratings.keys)
+        @stitle = 'hilite' if params[:sort] == "title"
+        @sdate = 'hilite' if params[:sort] == "release_date"
+      else
+        @movies = Movie.find_all_by_rating(@ratings.keys)
+      end
+      session[:ratings] = params[:ratings]
     end
-    session[:ratings] = params[:ratings]
   end
 
   def new
